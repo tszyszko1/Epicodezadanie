@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-import Redux from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Redux, { bindActionCreators } from 'redux';
+
+
+import MenuBar from '../components/menu_bar';
+import {fetchProjects} from '../actions';
 
 import {List, ListItem} from 'material-ui/List';
 import ActionInfo from 'material-ui/svg-icons/action/info';
@@ -14,19 +19,23 @@ import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 
 class ProjectsList extends Component{
 
+  componentWillMount() {
+    this.props.fetchProjects();
+  }
+
   goToProject(id){
-    this.props.history.push('/projekt/1');
+    this.props.history.push('/projekt/'+id);
   }
 
   renderProjects(){
     return this.props.projects.map((project,i)=>{
       return (
         <ListItem
-          key={ project.name }
+          key={ i }
           leftAvatar={<Avatar icon={<FileFolder />} />}
           // rightIcon={<ActionInfo />}
           primaryText={ project.name }
-          secondaryText={ project.date_start }
+          secondaryText={ project.date_start.toLocaleDateString() }
           onClick={ (e)=>this.goToProject(i) }
         />
       );
@@ -49,8 +58,8 @@ class ProjectsList extends Component{
   render() {
     return (
       <div>
+        <MenuBar title="Lista projektów" />
         <List>
-          <Subheader inset={true}>Projekty</Subheader>
           { this.renderProjects() }
         </List>
         <Divider inset={true} />
@@ -70,4 +79,8 @@ function mapStateToProps(state){
   };
 }
 
-export default connect(mapStateToProps)(ProjectsList);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({fetchProjects:fetchProjects},dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectsList);
