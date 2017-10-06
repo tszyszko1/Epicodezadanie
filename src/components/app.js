@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
+import ProjectsList from '../containers/projects_list';
 
-export default class App extends Component {
-  render() {
-    return (
-      <div>React simple starter</div>
-    );
-  }
-}
+const App = () => {
+  return (
+    <ProjectsList / >
+  );
+};
+
+
+export default App;
