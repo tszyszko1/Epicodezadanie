@@ -14,8 +14,12 @@ import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 
 class ProjectsList extends Component{
 
+  goToProject(id){
+    this.props.history.push('/projekt/1');
+  }
+
   renderProjects(){
-    return this.props.projects.map((project)=>{
+    return this.props.projects.map((project,i)=>{
       return (
         <ListItem
           key={ project.name }
@@ -23,6 +27,7 @@ class ProjectsList extends Component{
           // rightIcon={<ActionInfo />}
           primaryText={ project.name }
           secondaryText={ project.date_start }
+          onClick={ (e)=>this.goToProject(i) }
         />
       );
     });
