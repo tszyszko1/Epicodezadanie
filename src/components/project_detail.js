@@ -22,6 +22,7 @@ import Checkbox from 'material-ui/Checkbox';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 
 class ProjectDetail extends Component{
@@ -30,14 +31,12 @@ class ProjectDetail extends Component{
   state = {
     open: false,
     openProcedury: false,
+    openUsterki: false,
     id: this.id,
     newProject: this.props.projects[this.id],
     value:null,
-    proceduresLeft: this.props.procedures
-  };
-  handleOpen = () => {
-    this.setState({...this.state, open: true});
-    console.log(this.props);
+    proceduresLeft: this.props.procedures,
+    nowausterka: {name:'',desc:''}
   };
 
   componentWillMount(){
@@ -46,18 +45,19 @@ class ProjectDetail extends Component{
     });
   }
 
-  onDodajProcedure = () => {
-    this.setState({...this.state, openProcedury: true});
-  };
-
   procedureDelete = (i)=>{
     let proceduresLeft = this.state.proceduresLeft.push(this.state.newProject.procedures[i]);
     let newProject = this.state.newProject.procedures.splice(i,1);
     this.setState({...this.state, value:null});
   }
 
+  failureDelete = (i)=>{
+    this.state.newProject.failure.splice(i,1);
+    this.setState(this.state);
+  }
+
   handleClose = () => {
-    this.setState({...this.state, open: false,openProcedury: false});
+    this.setState({...this.state, open: false,openProcedury: false, openUsterki:false});
   };
 
   handleClose2 = () => {
@@ -115,35 +115,48 @@ class ProjectDetail extends Component{
       );
     });
   }
+  renderFailure(){
+    return this.state.newProject.failure.map((item,i)=>{
+      return (
+        <Card key={i}>
+            <CardHeader
+              title={item.name}
+              actAsExpander={true}
+              showExpandableButton={true}
+            />
+            <CardActions>
+              <Checkbox
+                checked={item.status}
+                onCheck={() => {item.status=!item.status;this.setState(this.state)}}
+                label="naprawiono"
+              />
+              <FlatButton label="Usuń usterkę" onClick={()=>this.failureDelete(i)}/>
+            </CardActions>
+            <CardText expandable={true}>
+              {item.desc}
+            </CardText>
+          </Card>
+      );
+    });
+  }
 
   render(){
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.handleClose2}
-      />,
-    ];
 
-    const actions2 = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.onSubmit2}
-      />,
-    ];
+    const actions = (callback)=>{
+      return [
+        <FlatButton
+          label="Cancel"
+          primary={true}
+          onClick={this.handleClose}
+        />,
+        <FlatButton
+          label="Submit"
+          primary={true}
+          keyboardFocused={true}
+          onClick={callback}
+        />,
+      ];
+    }
 
     return (
       <div>
@@ -187,22 +200,11 @@ class ProjectDetail extends Component{
           <FlatButton
             label="Dodaj Procedurę"
             fullWidth={true}
-            onClick={this.onDodajProcedure}
-          />
-          <Divider style={{marginTop:20}} />
-          <FlatButton
-            label="Zapisz"
-            fullWidth={true}
-            onClick={() => {this.onSubmit()}}
-          />
-          <FlatButton
-            label="Usuń projekt"
-            fullWidth={true}
-            onClick={this.handleOpen}
+            onClick={()=>this.setState({...this.state, openProcedury: true})}
           />
           <Dialog
             title="Uwaga!!!"
-            actions={actions}
+            actions={actions(()=>{this.handleClose2()})}
             modal={false}
             open={this.state.open}
             onRequestClose={this.handleClose}
@@ -211,7 +213,7 @@ class ProjectDetail extends Component{
           </Dialog>
           <Dialog
             title="Dodaj procedurę"
-            actions={actions2}
+            actions={actions(()=>{onSubmit2()})}
             modal={false}
             open={this.state.openProcedury}
             onRequestClose={this.handleClose}
@@ -225,6 +227,51 @@ class ProjectDetail extends Component{
               {this.renderProcedures2()}
             </SelectField>
           </Dialog>
+          <Divider />
+          <List>
+            <Subheader inset={true}>
+              Usterki
+            </Subheader>
+            { this.renderFailure() }
+          </List>
+          <FlatButton
+            label="Dodaj usterkę"
+            fullWidth={true}
+            onClick={()=>{this.setState({...this.state,openUsterki:true})}}
+          />
+          <Dialog
+            title="Dodaj usterkę"
+            actions={actions(()=>{
+              this.state.newProject.failure.push({name:this.state.nowausterka.name,img:null,status:false,desc:this.state.nowausterka.desc});
+              this.setState(this.state);
+              this.handleClose();
+            })}
+            modal={false}
+            open={this.state.openUsterki}
+            onRequestClose={this.handleClose}
+          >
+            <TextField
+              hintText="usterka"
+              underlineShow={false}
+              onChange={e=>{this.state.nowausterka.name=e.target.value}}
+            />
+            <TextField
+              hintText="opis"
+              underlineShow={false}
+              onChange={e=>{this.state.nowausterka.desc=e.target.value}}
+            />
+          </Dialog>
+          <Divider style={{marginTop:20}} />
+          <FlatButton
+            label="Zapisz zmiany"
+            fullWidth={true}
+            onClick={() => {this.onSubmit()}}
+          />
+          <FlatButton
+            label="Usuń projekt"
+            fullWidth={true}
+            onClick={()=>this.setState({...this.state, open: true})}
+          />
         </Paper>
       </div>
     );

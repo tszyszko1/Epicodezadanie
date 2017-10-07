@@ -23,7 +23,9 @@ const list_start = [
         ]
       }
     ],
-    failure: []
+    failure: [
+      {name:"przykladowa usterka",img:null,status:true,desc: "Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio"},
+      {name:"przykladowa usterka 2",img:null,status:false,desc:"Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio"}]
   },
   {
     name: 'Pałac kultury',
