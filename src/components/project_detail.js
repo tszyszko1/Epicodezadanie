@@ -13,12 +13,20 @@ import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
+import {List, ListItem} from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
+import ActionAssignment from 'material-ui/svg-icons/action/assignment';
+import {blue500, yellow600} from 'material-ui/styles/colors';
+import Checkbox from 'material-ui/Checkbox';
+
 
 class ProjectDetail extends Component{
+
   id = this.props.match.params.id;
   newProject = this.props.projects[this.id];
   state = {
-    open: false,
+    open: false
   };
 
   handleOpen = () => {
@@ -36,16 +44,35 @@ class ProjectDetail extends Component{
     })
   };
 
-
   onSubmit = ()=>{
     const f1 = () => {
-      this.props.editProject(this.id,this.newProject, () => {
-        this.props.history.push("/");
-      });
+      this.props.editProject(this.id,this.newProject, () => {console.log('saved');});
     }
     const f2 = ()=>{alert("proszę wypełnić wszystie pola i podać poprawne daty");}
     (this.newProject.name=='' || this.newProject.location==''||(this.newProject.date_start>this.newProject.date_end)) ? f2() : f1();
 
+  }
+
+  renderProcedures(){
+    return this.newProject.procedures.map((procedure)=>{
+      return (
+        <ListItem
+          key={ procedure.name }
+          leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
+          // rightIcon={<ActionInfo />}
+          primaryText={ procedure.name }
+          nestedItems={procedure.toDoList.map((item,i)=>{
+            return <ListItem
+              key={i}
+              primaryText={item.text}
+              leftCheckbox={<Checkbox
+              defaultChecked={item.status} />}
+              onChange = {(event) => {item.status=!item.status}}
+            />;
+          })}
+        />
+      );
+    });
   }
 
   render(){
@@ -95,6 +122,11 @@ class ProjectDetail extends Component{
             defaultDate={this.newProject.date_end}
             disableYearSelection={false}
           />
+          <Divider style={{marginTop:20}} />
+          <List>
+            <Subheader inset={true}>Procedury</Subheader>
+            { this.renderProcedures() }
+          </List>
           <FlatButton
             label="Zapisz"
             fullWidth={true}

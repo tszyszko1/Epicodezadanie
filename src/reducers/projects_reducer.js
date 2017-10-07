@@ -5,7 +5,24 @@ const list_start = [
     location: 'Warszawa',
     date_start: new Date(1999,12,12),
     date_end: new Date(2020,5,8),
-    procedures: [],
+    procedures: [
+      {
+        name: 'Procedura budowy fundamentów',
+        toDoList: [
+          {text: 'Wykop wykonany na głębokość minimum 1m',status: true},
+          {text: 'Wykop wykonany na szerokość od 50 cm do 100 cm',status: false},
+          {text: 'Brak wód gruntowych',status: false},
+        ]
+      },
+      {
+        name: 'Procedura budowy dachu',
+        toDoList: [
+          {text: 'Konstrukcja zgodna z projektem',status: false},
+          {text: 'Belki zabezpieczone przed wilgocią',status: false},
+          {text: 'Nachylenie dachu przynajmniej 10%',status: false},
+        ]
+      }
+    ],
     failure: []
   },
   {
