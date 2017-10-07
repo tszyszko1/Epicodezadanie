@@ -16,8 +16,18 @@ import FileFolder from 'material-ui/svg-icons/file/folder';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 import {blue500, yellow600} from 'material-ui/styles/colors';
 import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
+import TextField from 'material-ui/TextField';
+
 
 class ProjectsList extends Component{
+
+  constructor(props){
+    super(props);
+    this.state = {
+      term:'',
+      projects: this.props.projects
+    };
+  }
 
   componentWillMount() {
     this.props.fetchProjects();
@@ -27,8 +37,17 @@ class ProjectsList extends Component{
     this.props.history.push('/projekt/'+id);
   }
 
+  searchProject = (e)=>{
+    this.state.term = e.target.value;
+    this.state.projects = this.props.projects.filter((item,i)=>{
+      let a = true;
+      (item.name.search(new RegExp(e.target.value, "i"))==-1) ? a= false: a= true;
+      return a;
+    });
+    this.setState(this.state);
+  }
   renderProjects(){
-    return this.props.projects.map((project,i)=>{
+    return this.state.projects.map((project,i)=>{
       return (
         <ListItem
           key={ i }
@@ -59,20 +78,27 @@ class ProjectsList extends Component{
     return (
       <div>
         <MenuBar title="Lista projektów" />
+        <TextField
+          hintText="wyszukaj projekt"
+          underlineShow={true}
+          value={this.state.term}
+          onChange={(e)=>this.searchProject(e)}
+        />
         <List>
           { this.renderProjects() }
         </List>
         <Divider inset={true} />
-        <List>
+        {/* <List>
           <Subheader inset={true}>Procedury</Subheader>
           { this.renderProcedures() }
-        </List>
+        </List> */}
       </div>
     );
   }
 }
 
 function mapStateToProps(state){
+  window.localStorage.setItem("projectList",JSON.stringify(state));
   return {
     projects: state.projects,
     procedures: state.procedures

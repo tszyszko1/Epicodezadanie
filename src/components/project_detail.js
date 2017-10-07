@@ -91,23 +91,27 @@ class ProjectDetail extends Component{
     return this.state.newProject.procedures.map((procedure,i)=>{
       return (
         <ListItem
-          key={ procedure.name }
-          leftAvatar={<Avatar icon={<NavigationClose onClick={e=>this.procedureDelete(i)} />} backgroundColor={red500} />}
-          // rightIcon={<ActionInfo />}
-          primaryText={ procedure.name }
           nestedItems={procedure.toDoList.map((item,i)=>{
             return <ListItem
               key={i}
               primaryText={item.text}
               leftCheckbox={<Checkbox
-              defaultChecked={item.status} />}
-              onChange = {(event) => {item.status=!item.status}}
+              checked={item.status} />}
+              onChange = {() => {
+                item.status=!item.status;
+                item.status ? ++procedure.done:--procedure.done;
+                this.setState(this.state);
+              }}
             />;
           })}
+          key={ procedure.name }
+          leftAvatar={<Avatar icon={<NavigationClose onClick={()=>this.procedureDelete(i)} />} backgroundColor={red500} />}
+          primaryText={ procedure.name  +' '+procedure.done+'/'+procedure.toDoList.length}
         />
       );
     });
   }
+
   renderProcedures2(){
     return this.state.proceduresLeft.map((procedure,i)=>{
       return (
@@ -261,7 +265,7 @@ class ProjectDetail extends Component{
               onChange={e=>{this.state.nowausterka.desc=e.target.value}}
             />
           </Dialog>
-          <Divider style={{marginTop:20}} />
+          <Divider style={{marginTop:20,marginBottom:20}} />
           <FlatButton
             label="Zapisz zmiany"
             fullWidth={true}
