@@ -17,48 +17,82 @@ import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
-import {blue500, yellow600} from 'material-ui/styles/colors';
+import {blue500, yellow600,red500} from 'material-ui/styles/colors';
 import Checkbox from 'material-ui/Checkbox';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 
 class ProjectDetail extends Component{
-
   id = this.props.match.params.id;
-  newProject = this.props.projects[this.id];
+
   state = {
-    open: false
+    open: false,
+    openProcedury: false,
+    id: this.id,
+    newProject: this.props.projects[this.id],
+    value:null,
+    proceduresLeft: this.props.procedures
+  };
+  handleOpen = () => {
+    this.setState({...this.state, open: true});
+    console.log(this.props);
   };
 
-  handleOpen = () => {
-    this.setState({open: true});
+  componentWillMount(){
+    this.props.projects[this.id].procedures.forEach((item)=>{
+      this.state.proceduresLeft.splice(item,1);
+    });
+  }
+
+  onDodajProcedure = () => {
+    this.setState({...this.state, openProcedury: true});
   };
+
+  procedureDelete = (i)=>{
+    let proceduresLeft = this.state.proceduresLeft.push(this.state.newProject.procedures[i]);
+    let newProject = this.state.newProject.procedures.splice(i,1);
+    this.setState({...this.state, value:null});
+  }
 
   handleClose = () => {
-    this.setState({open: false});
+    this.setState({...this.state, open: false,openProcedury: false});
   };
 
   handleClose2 = () => {
-    this.setState({open: false});
+    this.setState({...this.state, open: false, openProcedury: false});
     this.props.deleteProject(this.id,() => {
       this.props.history.push("/");
     })
   };
 
+  handleChange = (event, index, value) => this.setState({...this.state, value:value});
+
   onSubmit = ()=>{
     const f1 = () => {
-      this.props.editProject(this.id,this.newProject, () => {console.log('saved');});
+      this.props.editProject(this.id,this.state.newProject, () => {console.log('saved');});
     }
     const f2 = ()=>{alert("proszę wypełnić wszystie pola i podać poprawne daty");}
-    (this.newProject.name=='' || this.newProject.location==''||(this.newProject.date_start>this.newProject.date_end)) ? f2() : f1();
+    (this.state.newProject.name=='' || this.state.newProject.location==''||(this.state.newProject.date_start>this.state.newProject.date_end)) ? f2() : f1();
 
   }
 
+  onSubmit2 = ()=>{
+    let val = this.state.value;
+    let newProject = this.state.newProject.procedures.push(this.state.proceduresLeft[val]);
+    let index = this.state.proceduresLeft.indexOf(this.state.proceduresLeft[val]);
+    let proceduresLeft = this.state.proceduresLeft.splice(index,1);
+    this.setState({...this.state, value:null});
+    this.handleClose();
+  }
+
   renderProcedures(){
-    return this.newProject.procedures.map((procedure)=>{
+    return this.state.newProject.procedures.map((procedure,i)=>{
       return (
         <ListItem
           key={ procedure.name }
-          leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
+          leftAvatar={<Avatar icon={<NavigationClose onClick={e=>this.procedureDelete(i)} />} backgroundColor={red500} />}
           // rightIcon={<ActionInfo />}
           primaryText={ procedure.name }
           nestedItems={procedure.toDoList.map((item,i)=>{
@@ -71,6 +105,13 @@ class ProjectDetail extends Component{
             />;
           })}
         />
+      );
+    });
+  }
+  renderProcedures2(){
+    return this.state.proceduresLeft.map((procedure,i)=>{
+      return (
+         <MenuItem key={i} value={i} primaryText={procedure.name} />
       );
     });
   }
@@ -90,6 +131,20 @@ class ProjectDetail extends Component{
       />,
     ];
 
+    const actions2 = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        keyboardFocused={true}
+        onClick={this.onSubmit2}
+      />,
+    ];
+
     return (
       <div>
         <MenuBar title="Edytuj projekt" />
@@ -97,36 +152,44 @@ class ProjectDetail extends Component{
           <TextField
             hintText="nazwa projektu"
             underlineShow={false}
-            onChange={e=>{this.newProject.name=e.target.value}}
-            defaultValue={this.newProject.name}
+            onChange={e=>{this.state.newProject.name=e.target.value}}
+            defaultValue={this.state.newProject.name}
           />
           <Divider />
           <TextField
             hintText="miejsce projektu"
             underlineShow={false}
-            onChange={e=>{this.newProject.location=e.target.value}}
-            defaultValue={this.newProject.location}
+            onChange={e=>{this.state.newProject.location=e.target.value}}
+            defaultValue={this.state.newProject.location}
           />
           <Divider />
           <DatePicker
-            onChange={(e,date)=>{this.newProject.date_start=date}}
+            onChange={(e,date)=>{this.state.newProject.date_start=date}}
             autoOk={false}
             floatingLabelText="data początkowa"
-            defaultDate={this.newProject.date_start}
+            defaultDate={this.state.newProject.date_start}
             disableYearSelection={false}
           />
           <DatePicker
-            onChange={(e,date)=>{this.newProject.date_end=date}}
+            onChange={(e,date)=>{this.state.newProject.date_end=date}}
             autoOk={false}
             floatingLabelText="data końcowa"
-            defaultDate={this.newProject.date_end}
+            defaultDate={this.state.newProject.date_end}
             disableYearSelection={false}
           />
           <Divider style={{marginTop:20}} />
           <List>
-            <Subheader inset={true}>Procedury</Subheader>
+            <Subheader inset={true}>
+              Procedury
+            </Subheader>
             { this.renderProcedures() }
           </List>
+          <FlatButton
+            label="Dodaj Procedurę"
+            fullWidth={true}
+            onClick={this.onDodajProcedure}
+          />
+          <Divider style={{marginTop:20}} />
           <FlatButton
             label="Zapisz"
             fullWidth={true}
@@ -144,8 +207,24 @@ class ProjectDetail extends Component{
             open={this.state.open}
             onRequestClose={this.handleClose}
           >
-          Czy na pewno chcesz usunąć projekt?
-        </Dialog>
+            Czy na pewno chcesz usunąć projekt?
+          </Dialog>
+          <Dialog
+            title="Dodaj procedurę"
+            actions={actions2}
+            modal={false}
+            open={this.state.openProcedury}
+            onRequestClose={this.handleClose}
+          >
+            Dodaj procedurę z listy
+            <SelectField
+              floatingLabelText="Procedura"
+              value={this.state.value}
+              onChange={this.handleChange}
+            >
+              {this.renderProcedures2()}
+            </SelectField>
+          </Dialog>
         </Paper>
       </div>
     );
