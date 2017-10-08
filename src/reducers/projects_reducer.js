@@ -44,7 +44,16 @@ if(window.localStorage.getItem('projectList')){
      location: 'Warszawa',
      date_start:  new Date(1950,12,2),
      date_end:  new Date(1970,10,5),
-     procedures: [],
+     procedures: [
+       {
+          name: 'Procedura budowy fundamentów',
+          toDoList: [
+            {text: 'Wykop wykonany na głębokość minimum 1m',status: true},
+            {text: 'Wykop wykonany na szerokość od 50 cm do 100 cm',status: false},
+            {text: 'Brak wód gruntowych',status: false},
+          ],
+          done:1
+        },],
      failure: []
    },
    {

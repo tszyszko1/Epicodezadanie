@@ -6,6 +6,10 @@ import Redux, { bindActionCreators } from 'redux';
 import MenuBar from './menu_bar';
 import { editProject, deleteProject } from '../actions';
 
+// import ImagesUploader from 'react-images-uploader';
+// import 'react-images-uploader/styles.css';
+// import 'react-images-uploader/font.css';
+
 import DatePicker from 'material-ui/DatePicker';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -26,6 +30,7 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 
 class ProjectDetail extends Component{
+
   id = this.props.match.params.id;
 
   state = {
@@ -79,12 +84,16 @@ class ProjectDetail extends Component{
   }
 
   onSubmit2 = ()=>{
+
     let val = this.state.value;
-    let newProject = this.state.newProject.procedures.push(this.state.proceduresLeft[val]);
-    let index = this.state.proceduresLeft.indexOf(this.state.proceduresLeft[val]);
-    let proceduresLeft = this.state.proceduresLeft.splice(index,1);
-    this.setState({...this.state, value:null});
-    this.handleClose();
+    if(val!==null){
+      let newProject = this.state.newProject.procedures.push(this.state.proceduresLeft[val]);
+      let index = this.state.proceduresLeft.indexOf(this.state.proceduresLeft[val]);
+      let proceduresLeft = this.state.proceduresLeft.splice(index,1);
+      this.state.value = null;
+      this.setState(this.state);
+      this.handleClose();
+    }
   }
 
   renderProcedures(){
@@ -217,12 +226,12 @@ class ProjectDetail extends Component{
           </Dialog>
           <Dialog
             title="Dodaj procedurę"
-            actions={actions(()=>{onSubmit2()})}
+            actions={actions(()=>{this.onSubmit2()})}
             modal={false}
             open={this.state.openProcedury}
             onRequestClose={this.handleClose}
           >
-            Dodaj procedurę z listy
+            Dodaj procedurę z listy <br/>
             <SelectField
               floatingLabelText="Procedura"
               value={this.state.value}
@@ -230,6 +239,16 @@ class ProjectDetail extends Component{
             >
               {this.renderProcedures2()}
             </SelectField>
+            {/* <ImagesUploader
+              url="http://localhost:8080/multiple"
+              optimisticPreviews
+              onLoadEnd={(err) => {
+                  if (err) {
+                      console.error(err);
+                  }
+              }}
+              label="Upload multiple images"
+            /> */}
           </Dialog>
           <Divider />
           <List>
