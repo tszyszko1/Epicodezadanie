@@ -9,6 +9,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ProjectDetail from './components/project_detail';
 import ProjectNew from './components/project_new';
 import ProjectsList from './containers/projects_list';
+import ProcedureList from './containers/procedure_list';
 import reducers from './reducers';
 
 const createStoreWithMiddleware = applyMiddleware()(createStore);
@@ -19,6 +20,7 @@ ReactDOM.render(
       <BrowserRouter>
         <Switch>
           <Route path="/projekt/nowy" component={ ProjectNew } />
+          <Route path="/procedury" component={ ProcedureList } />
           <Route path="/projekt/:id" component={ ProjectDetail } />
           <Route path="/" component={ ProjectsList } />
         </Switch>

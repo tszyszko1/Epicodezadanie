@@ -29,6 +29,10 @@ const MenuBar = (props) => {
       primaryText="Nowy Projekt"
       containerElement={<Link to="/projekt/nowy" />}
     />
+    <MenuItem
+      primaryText="Procedury"
+      containerElement={<Link to="/procedury" />}
+    />
   </IconMenu>
   );
 
