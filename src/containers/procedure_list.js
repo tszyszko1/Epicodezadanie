@@ -5,7 +5,7 @@ import Redux, { bindActionCreators } from 'redux';
 
 
 import MenuBar from '../components/menu_bar';
-import {fetchProjects} from '../actions';
+import {editProcedures} from '../actions';
 
 import {List, ListItem} from 'material-ui/List';
 import ActionInfo from 'material-ui/svg-icons/action/info';
@@ -23,6 +23,7 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 
 class ProcedureList extends Component{
+
   constructor(props){
     super(props);
     this.state = {
@@ -32,6 +33,9 @@ class ProcedureList extends Component{
       list: null,
       typListy: null
     };
+  }
+  componentDidUpdate(){
+
   }
 
   procedureDelete = (i)=>{
@@ -81,9 +85,6 @@ class ProcedureList extends Component{
     });
   }
 
-
-
-
   render() {
     const actions = (callback)=>{
       return [
@@ -100,8 +101,6 @@ class ProcedureList extends Component{
         />,
       ];
     }
-
-
 
     return (
       <div>
@@ -130,6 +129,7 @@ class ProcedureList extends Component{
               });
             }
             this.state.open=false;
+            this.props.editProcedures(this.state.procedures);
             this.setState(this.state);
           })}
           modal={false}
@@ -156,7 +156,7 @@ function mapStateToProps(state){
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({fetchProjects:fetchProjects},dispatch);
+  return bindActionCreators({editProcedures:editProcedures},dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProcedureList);

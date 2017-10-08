@@ -1,10 +1,10 @@
-export default function () {
-  // var ret;
-  // if(window.localStorage.getItem('projectList')){
-  //   ret=JSON.parse(window.localStorage.getItem('projectList')).procedures;
-  // }else{
-  //   ret = [
-return [
+import { EDIT_PROCEDURES } from '../actions';
+
+  var ret;
+  if(window.localStorage.getItem('projectList')){
+    ret=JSON.parse(window.localStorage.getItem('projectList')).procedures;
+  }else{
+    ret = [
       {
         name: 'Procedura budowy fundamentów',
         toDoList: [
@@ -80,7 +80,16 @@ return [
         done:0
       }
     ];
-  // }
-  // return ret;
+  }
 
+
+export default function(state = ret,action){
+  switch(action.type){
+    case EDIT_PROCEDURES:
+      console.log("editing procedures");
+      console.log(action.payload);
+      return action.payload;
+    default:
+      return state;
+  }
 }

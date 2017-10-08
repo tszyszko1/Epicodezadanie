@@ -239,16 +239,6 @@ class ProjectDetail extends Component{
             >
               {this.renderProcedures2()}
             </SelectField>
-            {/* <ImagesUploader
-              url="http://localhost:8080/multiple"
-              optimisticPreviews
-              onLoadEnd={(err) => {
-                  if (err) {
-                      console.error(err);
-                  }
-              }}
-              label="Upload multiple images"
-            /> */}
           </Dialog>
           <Divider />
           <List>
